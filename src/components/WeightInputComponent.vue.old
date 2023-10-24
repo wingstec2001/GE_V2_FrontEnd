@@ -1,0 +1,81 @@
+<template>
+  <div>
+    <v-text-field
+      v-model="displayValue"
+      :error-messages="errorMessages"
+      :outlined="outlined"
+      dense
+      :label="label"
+      :readonly="readonly"
+      :placeholder="placeholder"
+      hide-details="auto"
+      suffix="kg"
+      class="weight-input"
+      @click="handleClick($event)"
+      @input="handleInput"
+    ></v-text-field>
+  </div>
+</template>
+
+<script>
+import { isNull } from '@/core/utils'
+
+export default {
+  model: {
+    prop: 'weight',
+    event: 'weightChange',
+  },
+  props: ['weight', 'errorMessages', 'placeholder', 'outlined', 'label', 'readonly'],
+  data: () => ({
+    inputElement: '',
+    curVal: '',
+
+    displayValue: '',
+  }),
+  watch: {
+    weight(val) {
+      this.refreshWeightInfo(val)
+    },
+  },
+  mounted() {
+    this.refreshWeightInfo(this.weight)
+  },
+  methods: {
+    refreshWeightInfo(val) {
+      const str = isNull(val) ? '0' : `${val}`
+      const formatter = str.replace(/[,]/g, '')
+      this.$emit('weightChange', formatter)
+      this.displayValue = formatter.replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, '$1,')
+    },
+    handleClick(event) {
+      event.target.select()
+    },
+    handleInput(value) {
+      this.refreshWeightInfo(value)
+    },
+
+    // 仅能输入数字
+
+    isNumber(keyCode) {
+      // 数字
+
+      if (keyCode >= 48 && keyCode <= 57) return true
+
+      // 小数字键盘
+
+      if (keyCode >= 96 && keyCode <= 105) return true
+
+      // Backspace, del, 左右方向键
+
+      if (keyCode === 8 || keyCode === 46 || keyCode === 37 || keyCode === 39) return true
+
+      return false
+    },
+  },
+}
+</script>
+<style scoped>
+    .weight-input>>> input {
+      text-align: right
+    }
+</style>
