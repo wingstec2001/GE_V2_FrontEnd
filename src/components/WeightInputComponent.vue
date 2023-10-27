@@ -9,6 +9,7 @@
       :readonly="readonly"
       :placeholder="placeholder"
       hide-details="auto"
+      type="number"
       suffix="kg"
       :class="['weight-input',error?errorClass:'']"
       @click="handleClick($event)"
